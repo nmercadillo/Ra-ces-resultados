@@ -311,7 +311,14 @@ function renderTable(stats, selectedCourse) {
     
     const isBach = selectedCourse.toLowerCase().includes('bachillerato');
     
-    let headerHTML = '<tr><th>Materia</th><th>1ª Ev</th><th>2ª Ev</th><th>3ª Ev</th>';
+    // Check if 3ª EV has data
+    const has3evData = stats.some(s => s.eval3Count > 0);
+
+    let headerHTML = '<tr><th>Materia</th><th>1ª Ev</th><th>2ª Ev</th>';
+    if (has3evData) {
+        headerHTML += '<th>3ª Ev</th>';
+    }
+    
     if (isBach) {
         headerHTML += '<th>Ord</th><th>Ext</th>';
     } else {
@@ -348,8 +355,11 @@ function renderTable(stats, selectedCourse) {
 
         let rowHTML = `<td>${sub}</td>
             <td>${formatPct(s.passed1Ev, s.eval1Count)}</td>
-            <td>${formatPct(s.passed2Ev, s.eval2Count)}</td>
-            <td>${formatPct(s.passed3Ev, s.eval3Count)}</td>`;
+            <td>${formatPct(s.passed2Ev, s.eval2Count)}</td>`;
+        
+        if (has3evData) {
+            rowHTML += `<td>${formatPct(s.passed3Ev, s.eval3Count)}</td>`;
+        }
         
         if (isBach) {
             rowHTML += `<td>${formatPct(s.passedOrd, s.evalOrdCount)}</td>
@@ -368,8 +378,16 @@ function downloadCSV() {
     
     const selectedCourse = currentCourse;
     const isBach = selectedCourse.toLowerCase().includes('bachillerato');
+    const has3evData = currentStats.some(s => s.eval3Count > 0);
     
-    let csv = isBach ? 'MATERIA,1EV,2EV,3EV,ORD,EXT\n' : 'MATERIA,1EV,2EV,3EV,FINAL\n';
+    let csv = 'MATERIA,1EV,2EV';
+    if (has3evData) csv += ',3EV';
+    
+    if (isBach) {
+        csv += ',ORD,EXT\n';
+    } else {
+        csv += ',FINAL\n';
+    }
     
     const formatNum = (passed, total) => {
         if (!total) return '';
@@ -379,8 +397,11 @@ function downloadCSV() {
     currentStats.forEach(s => {
         csv += `"${s.subject}",`;
         csv += `${formatNum(s.passed1Ev, s.eval1Count)},`;
-        csv += `${formatNum(s.passed2Ev, s.eval2Count)},`;
-        csv += `${formatNum(s.passed3Ev, s.eval3Count)}`;
+        csv += `${formatNum(s.passed2Ev, s.eval2Count)}`;
+        
+        if (has3evData) {
+            csv += `,${formatNum(s.passed3Ev, s.eval3Count)}`;
+        }
         
         if (isBach) {
             csv += `,${formatNum(s.passedOrd, s.evalOrdCount)},`;
