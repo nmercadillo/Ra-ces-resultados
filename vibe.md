@@ -18,10 +18,9 @@ El proyecto se ha reestructurado desde tres repositorios independientes a una ar
     -   **Asistencia (`asistencia.html`, `js/asistencia.js`):** Enfocado en métricas de absentismo. Lógica de agrupación por niveles educativos fijos.
     -   **Notas por Grupo (`notas_grupo.html`, `js/notas_grupo.js`):** Enfocado en el rendimiento del alumno. Incluye lógica compleja de agrupación dinámica de unidades (UI de mapeo de grupos).
     -   **Notas por Materia (`notas_materia.html`, `js/notas_materia.js`):** Enfocado en el rendimiento por asignatura.
-        -   **UX Refactorizada (v3):** Se simplificó la nomenclatura de los cursos eliminando referencias a leyes educativas (ej. "1º de E.S.O." en lugar de "1º de E.S.O. (LOMLOE)").
-        -   **Layout Multi-línea:** Las pestañas de selección se organizan en dos líneas: ESO arriba y Bachillerato abajo para una mejor jerarquía visual.
-        -   **Visualización:** El año académico se muestra explícitamente sobre la tabla de resultados.
-        -   **Lógica de Negocio:** Incluye agregaciones curriculares (Matemáticas A+B, Inglés Total) y filtrado de columnas por etapa educativa (ESO vs Bach).
+        -   **UX Refactorizada (v4):** Organización de pestañas en dos líneas (ESO/Bach), simplificación de nombres de curso (eliminando ley educativa) y visualización del año académico.
+        -   **Lógica Dinámica de Matemáticas:** Detección automática de múltiples asignaturas de Matemáticas en 4º ESO y Bachillerato para generar una fila de "Matemáticas (Total)" resaltada.
+        -   **Columnas Inteligentes:** Ocultación dinámica de la columna 3ª EV si no hay datos. Filtrado de columnas por etapa educativa (ESO vs Bach).
 
 ### Decisiones de Diseño Clave
 
@@ -36,6 +35,7 @@ El proyecto se ha reestructurado desde tres repositorios independientes a una ar
 3.  **Corrección de Conflictos:** Se solucionaron problemas de colisión de nombres (ej. función `parseCSV` global vs local) que causaban recursión infinita.
 4.  **Optimización UI:** Se mejoró la navegación cruzada entre herramientas y se unificó el diseño visual (banners, botones, loaders).
 5.  **Mejora de UX en Notas por Materia:** Cambio de control de selección de dropdown a pestañas, simplificación de nombres de curso y organización multi-línea.
+6.  **Automatización de Agrupaciones:** Implementación de lógica para agrupar automáticamente variantes de Matemáticas según el contenido del fichero.
 
 ## Estado Actual
 

@@ -217,18 +217,19 @@ function processStats(data, selectedCourse) {
         if (subject.toLowerCase().includes('inglés')) {
             updateSubjectStats('Lengua Extranjera (Inglés - Total)', student, subjectsMap, studentSubjectMap);
         }
-
-        if (selectedCourse.includes('4º') && (subject === 'Matemáticas A' || subject === 'Matemáticas B')) {
-            updateSubjectStats('Matemáticas A+B', student, subjectsMap, studentSubjectMap);
-        }
-        
-        if (selectedCourse.includes('Bachillerato')) {
-            const lowerSub = subject.toLowerCase();
-            if (lowerSub.startsWith('matemáticas')) {
-               updateSubjectStats('Matemáticas (Total)', student, subjectsMap, studentSubjectMap);
-            }
-        }
     });
+
+    // Handle dynamic grouping for Matemáticas in 4th ESO and Bachillerato
+    if (selectedCourse === '4º de E.S.O.' || selectedCourse.includes('Bachillerato')) {
+        const mathSubjects = Array.from(subjectsMap.keys()).filter(s => s.startsWith('Matemáticas'));
+        if (mathSubjects.length >= 2) {
+            courseData.forEach(student => {
+                if (student.MATERIA_GENERAL && student.MATERIA_GENERAL.startsWith('Matemáticas')) {
+                    updateSubjectStats('Matemáticas (Total)', student, subjectsMap, studentSubjectMap);
+                }
+            });
+        }
+    }
 
     let sorted = Array.from(subjectsMap.values()).sort((a, b) => a.subject.localeCompare(b.subject));
     return reorderStats(sorted);
@@ -256,7 +257,6 @@ function reorderStats(stats) {
     };
 
     moveAfter('Lengua Extranjera (Inglés - Total)', 'Lengua Extranjera');
-    moveAfter('Matemáticas A+B', 'Matemáticas B');
     moveAfter('Matemáticas (Total)', 'Matemáticas');
 
     return stats;
@@ -339,9 +339,8 @@ function renderTable(stats, selectedCourse) {
             if (sub.includes('Geografía e Historia') || 
                 sub.includes('Lengua Castellana y Literatura') || 
                 sub === 'Lengua Extranjera (Inglés - Total)' ||
-                (sub === 'Matemáticas' && !isBach) || 
-                sub === 'Matemáticas A+B' || 
-                sub === 'Matemáticas (Total)') { 
+                sub === 'Matemáticas (Total)' ||
+                (sub === 'Matemáticas' && !selectedCourse.includes('4º') && !isBach)) { 
                 shouldHighlight = true;
             }
         }
