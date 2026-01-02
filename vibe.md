@@ -1,6 +1,7 @@
 # Contexto Técnico del Proyecto
 
 **Nombre:** Explotación de Datos Raíces
+**Acceso:** [https://elenafp.github.io/explotacion-raices/](https://elenafp.github.io/explotacion-raices/)
 **Fecha:** 2 de Enero de 2026
 **Objetivo:** Unificar tres herramientas de análisis de datos académicos en una suite web coherente, modular y fácil de mantener.
 
