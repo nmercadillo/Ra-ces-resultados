@@ -119,10 +119,14 @@ function processCSV(csvContent) {
             curso = '1º de Bachillerato';
         } else if (curso.startsWith('2º de Bachillerato')) {
             curso = '2º de Bachillerato';
-        } else if (curso === '1º Programa de Diversificación Curricular (LOMLOE)') {
-            curso = '3º de E.S.O. (LOMLOE)';
-        } else if (curso === '2º Programa de Diversificación Curricular (LOMLOE)') {
-            curso = '4º de E.S.O. (LOMLOE)';
+        } else if (curso.startsWith('1º de E.S.O.')) {
+            curso = '1º de E.S.O.';
+        } else if (curso.startsWith('2º de E.S.O.')) {
+            curso = '2º de E.S.O.';
+        } else if (curso.startsWith('3º de E.S.O.') || curso.includes('1º Programa de Diversificación')) {
+            curso = '3º de E.S.O.';
+        } else if (curso.startsWith('4º de E.S.O.') || curso.includes('2º Programa de Diversificación')) {
+            curso = '4º de E.S.O.';
         }
 
         if (!data1ev[curso]) {
@@ -174,10 +178,10 @@ function processCSV(csvContent) {
 
 function ordenCurso(curso) {
     const orden = {
-        '1º de E.S.O. (LOMLOE)': 1,
-        '2º de E.S.O. (LOMLOE)': 2,
-        '3º de E.S.O. (LOMLOE)': 3,
-        '4º de E.S.O. (LOMLOE)': 4,
+        '1º de E.S.O.': 1,
+        '2º de E.S.O.': 2,
+        '3º de E.S.O.': 3,
+        '4º de E.S.O.': 4,
         '1º de Bachillerato': 5,
         '2º de Bachillerato': 6
     };
