@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notas por Grupo - Explotación Raíces</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <a href="index.html" class="nav-btn">🏠 Inicio</a>
+        <a href="asistencia.html" class="nav-btn">Análisis de Asistencia</a>
+        <a href="notas_grupo.html" class="nav-btn active">Notas por Grupo</a>
+        <a href="notas_materia.html" class="nav-btn">Notas por Materia</a>
+        <a href="https://github.com/ElenaFP/raices-analisis-notas?tab=readme-ov-file#-c%C3%B3mo-usar" class="nav-btn help" target="_blank">❓ Ayuda</a>
+    </nav>
+    <div class="container">
+        <h1>📊 Notas por Grupo</h1>
+        <p class="subtitle" id="subtitle">Arrastra tu fichero CSV para analizar las notas por grupo</p>
+
+        <!-- Upload Section -->
+        <div class="upload-section" id="uploadSection">
+            <input type="file" id="csvFile" accept=".csv,.CSV" />
+            <label for="csvFile" class="upload-label">
+                📁 Seleccionar archivo CSV
+            </label>
+            <div class="file-info" id="fileInfo">
+                o arrastra el archivo aquí
+            </div>
+        </div>
+
+        <div class="error" id="error"></div>
+        <div class="loading" id="loader">
+            <div class="spinner"></div>
+            <p>Procesando datos...</p>
+        </div>
+
+        <!-- Grouping Interface -->
+        <div id="grouping-container">
+            <div class="results-header" style="border-bottom: none; margin-bottom: 10px;">
+                <h2 style="font-size: 1.5em; color: #333;">🛠️ Configuración de Grupos</h2>
+            </div>
+            <p style="color: #666; margin-bottom: 20px;">Combina diferentes unidades (ej. A, B, C) en un solo grupo arrastrándolas entre sí o seleccionándolas.</p>
+            
+            <div class="group-controls">
+                <input type="text" id="bulk-group-name" placeholder="Nombre para el grupo (ej. 1º ESO)">
+                <button class="btn" onclick="bulkGroup()">Agrupar Seleccionados</button>
+            </div>
+
+            <div class="group-list" id="group-list">
+                <!-- Groups injected via JS -->
+            </div>
+
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn" onclick="calculateAndShowResults()">Ver Resultados ➡️</button>
+            </div>
+        </div>
+
+        <!-- Results Interface -->
+        <div id="results">
+            <div class="results-header">
+                <h2 style="font-size: 1.8em; color: #333;" id="year-title">Resultados</h2>
+                <button class="btn btn-secondary" onclick="showGroupingUI()">⚙️ Reconfigurar Grupos</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('section-1ev', this)">1ª Evaluación</button>
+                <button class="tab-btn" onclick="switchTab('section-2ev', this)">2ª Evaluación</button>
+                <button class="tab-btn" onclick="switchTab('section-ord', this)">Final (Ordinaria)</button>
+                <button class="tab-btn" id="tab-ext" onclick="switchTab('section-ext', this)" style="display:none;">Extraordinaria</button>
+            </div>
+
+            <div id="section-1ev" class="eval-section active">
+                <div class="table-header-container">
+                    <span class="table-title">Resultados 1ª Evaluación</span>
+                    <button class="download-btn" onclick="downloadCSV('1ev')">⬇️ Descargar CSV</button>
+                </div>
+                <table id="table-1ev">
+                    <thead>
+                        <tr>
+                            <th>Grupo</th>
+                            <th>Alumnos</th>
+                            <th>Todo Aprobado</th>
+                            <th>1 Suspenso</th>
+                            <th>2 Suspensos</th>
+                            <th>3 Suspensos</th>
+                            <th>4+ Suspensos</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="section-2ev" class="eval-section">
+                <div class="table-header-container">
+                    <span class="table-title">Resultados 2ª Evaluación</span>
+                    <button class="download-btn" onclick="downloadCSV('2ev')">⬇️ Descargar CSV</button>
+                </div>
+                <table id="table-2ev">
+                    <thead>
+                        <tr>
+                            <th>Grupo</th>
+                            <th>Alumnos</th>
+                            <th>Todo Aprobado</th>
+                            <th>1 Suspenso</th>
+                            <th>2 Suspensos</th>
+                            <th>3 Suspensos</th>
+                            <th>4+ Suspensos</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="section-ord" class="eval-section">
+                <div class="table-header-container">
+                    <span class="table-title">Resultados Finales (Ordinaria)</span>
+                    <button class="download-btn" onclick="downloadCSV('ord')">⬇️ Descargar CSV</button>
+                </div>
+                <table id="table-ord">
+                    <thead>
+                        <tr>
+                            <th>Grupo</th>
+                            <th>Alumnos</th>
+                            <th>Todo Aprobado</th>
+                            <th>1 Suspenso</th>
+                            <th>2 Suspensos</th>
+                            <th>3 Suspensos</th>
+                            <th>4+ Suspensos</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="section-ext" class="eval-section">
+                <div class="table-header-container">
+                    <span class="table-title">Resultados Extraordinaria</span>
+                    <button class="download-btn" onclick="downloadCSV('ext')">⬇️ Descargar CSV</button>
+                </div>
+                <table id="table-ext">
+                    <thead>
+                        <tr>
+                            <th>Grupo</th>
+                            <th>Alumnos</th>
+                            <th>Todo Aprobado</th>
+                            <th>1 Suspenso</th>
+                            <th>2 Suspensos</th>
+                            <th>3 Suspensos</th>
+                            <th>4+ Suspensos</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/notas_grupo.js"></script>
+</body>
+</html>

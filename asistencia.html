@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Asistencia - Explotación Raíces</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <a href="index.html" class="nav-btn">🏠 Inicio</a>
+        <a href="asistencia.html" class="nav-btn active">Análisis de Asistencia</a>
+        <a href="notas_grupo.html" class="nav-btn">Notas por Grupo</a>
+        <a href="notas_materia.html" class="nav-btn">Notas por Materia</a>
+        <a href="https://github.com/ElenaFP/raices-analisis-asistencia?tab=readme-ov-file#-c%C3%B3mo-usar" class="nav-btn help" target="_blank">❓ Ayuda</a>
+    </nav>
+    <div class="container">
+        <h1>📊 Análisis de Asistencia</h1>
+        <p class="subtitle" id="subtitle">Arrastra tu fichero CSV para analizar la asistencia por nivel</p>
+
+        <div class="upload-section" id="uploadSection">
+            <input type="file" id="csvFile" accept=".csv,.CSV" />
+            <label for="csvFile" class="upload-label">
+                📁 Seleccionar archivo CSV
+            </label>
+            <div class="file-info" id="fileInfo">
+                o arrastra el archivo aquí
+            </div>
+        </div>
+
+        <div class="error" id="error"></div>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Procesando datos...</p>
+        </div>
+
+        <div class="results" id="results">
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('section-1ev', this)">1ª Evaluación</button>
+                <button class="tab-btn" onclick="switchTab('section-2ev', this)">2ª Evaluación</button>
+                <button class="tab-btn" onclick="switchTab('section-3ev', this)">3ª Evaluación</button>
+                <button class="tab-btn" onclick="switchTab('section-total', this)">Total del Curso</button>
+            </div>
+
+            <div id="section-1ev" class="evaluation-section active">
+                <div class="evaluation-header">
+                    <h2 class="evaluation-title" id="title1ev">1ª Evaluación</h2>
+                    <button class="download-btn" onclick="downloadCSV('1ev')">
+                        ⬇️ Descargar CSV
+                    </button>
+                </div>
+                <div id="table1ev"></div>
+            </div>
+
+            <div id="section-2ev" class="evaluation-section">
+                <div class="evaluation-header">
+                    <h2 class="evaluation-title" id="title2ev">2ª Evaluación</h2>
+                    <button class="download-btn" onclick="downloadCSV('2ev')">
+                        ⬇️ Descargar CSV
+                    </button>
+                </div>
+                <div id="table2ev"></div>
+            </div>
+
+            <div id="section-3ev" class="evaluation-section">
+                <div class="evaluation-header">
+                    <h2 class="evaluation-title" id="title3ev">3ª Evaluación</h2>
+                    <button class="download-btn" onclick="downloadCSV('3ev')">
+                        ⬇️ Descargar CSV
+                    </button>
+                </div>
+                <div id="table3ev"></div>
+            </div>
+
+            <div id="section-total" class="evaluation-section">
+                <div class="evaluation-header">
+                    <h2 class="evaluation-title" id="titletotal">Total del Curso</h2>
+                    <button class="download-btn" onclick="downloadCSV('total')">
+                        ⬇️ Descargar CSV
+                    </button>
+                </div>
+                <div id="tabletotal"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/asistencia.js"></script>
+</body>
+</html>
