@@ -243,7 +243,14 @@ function reorderStats(stats) {
         
         let idxParent = -1;
         for(let i=stats.length-1; i>=0; i--) {
-            if(stats[i].subject.includes(keywordParent) && stats[i].subject !== keywordToMove) {
+            // Find parent index. 
+            // In case of Matematicas (Total), we want it after ALL Matematicas subjects.
+            // Same for Ingles.
+            if(keywordParent === 'Matemáticas' && stats[i].subject.startsWith('Matemáticas') && stats[i].subject !== keywordToMove) {
+                idxParent = i;
+                break;
+            } else if (keywordParent === 'Lengua Extranjera' && stats[i].subject.toLowerCase().includes('inglés') && stats[i].subject !== keywordToMove) {
+                // For english, we want it after individual english subjects
                 idxParent = i;
                 break;
             }
