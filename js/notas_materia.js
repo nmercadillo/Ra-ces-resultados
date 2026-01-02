@@ -59,6 +59,8 @@ function processFile(file) {
 
 function processCSVData(csvText) {
     // Use global parseCSV from common.js
+    if (typeof parseCSV !== 'function') throw new Error('Función parseCSV no encontrada. Recarga la página.');
+    
     const rows = parseCSV(csvText);
     if (!rows || rows.length < 2) throw new Error('El archivo está vacío o no tiene cabecera');
 
@@ -144,7 +146,8 @@ function switchCourse(courseName) {
     currentStats = processStats(rawData, courseName);
     renderTable(currentStats, courseName);
     
-    document.getElementById('results').style.display = 'block';
+    const resultsDiv = document.getElementById('results');
+    if(resultsDiv) resultsDiv.style.display = 'block';
 }
 
 function parseGrade(grade) {
