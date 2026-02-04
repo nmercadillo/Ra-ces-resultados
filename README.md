@@ -84,6 +84,6 @@ explotacion-raices/
     └── notas_materia.js # Lógica específica de materias
 ```
 
-## 📄 Licencia
-
-Proyecto de código abierto desarrollado para facilitar la labor docente. Libre distribución y uso.
+## Licencia 📜
+Este proyecto está bajo la licencia **PolyForm Noncommercial 1.0.0**. 
+Se permite el uso personal, educativo y de investigación, pero **está prohibida su venta o uso para fines comerciales**.
