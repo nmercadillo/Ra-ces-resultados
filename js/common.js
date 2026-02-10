@@ -1,109 +1,90 @@
-// Common utilities
-
-function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
+// Normalización de nombres de grupo
+function normalizarGrupo(grupo) {
+    return grupo.trim().toUpperCase();
 }
 
-function parseCSVLine(line) {
-    // Regex to handle quoted fields containing commas
-    const regex = /,(?=(?:(?:[^"]*\"){2})*[^"]*$)/; 
-    return line.split(regex).map(field => field.trim().replace(/^"|"$/g, ''));
+// Obtener nivel desde el grupo
+function obtenerNivel(grupo) {
+    grupo = grupo.toUpperCase().trim();
+
+    if (/^1[A-Z]/.test(grupo)) return "1º ESO";
+    if (/^2[A-Z]/.test(grupo)) return "2º ESO";
+    if (/^3[A-Z]/.test(grupo)) return "3º ESO";
+    if (/^4[A-Z]/.test(grupo)) return "4º ESO";
+
+    if (/^1.*BAC/.test(grupo)) return "1º Bachillerato";
+    if (/^2.*BAC/.test(grupo)) return "2º Bachillerato";
+
+    return "Otros";
 }
 
-function parseCSV(text) {
-    // Robust CSV parser handling newlines in quotes
-    const lines = [];
-    let currentLine = [];
-    let currentField = '';
-    let inQuotes = false;
+// Agrupar alumnos por grupo
+function agruparPorGrupo(alumnos) {
+    const grupos = {};
+    for (const alumno of alumnos) {
+        const g = normalizarGrupo(alumno.grupo);
+        if (!grupos[g]) grupos[g] = [];
+        grupos[g].push(alumno);
+    }
+    return grupos;
+}
 
-    for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        const nextChar = text[i + 1];
+// Agrupar alumnos por nivel
+function agruparPorNivel(alumnos) {
+    const niveles = {};
+    for (const alumno of alumnos) {
+        const nivel = obtenerNivel(alumno.grupo);
+        if (!niveles[nivel]) niveles[nivel] = [];
+        niveles[nivel].push(alumno);
+    }
+    return niveles;
+}
 
-        if (char === '"') {
-            if (inQuotes && nextChar === '"') {
-                currentField += '"';
-                i++;
-            } else {
-                inQuotes = !inQuotes;
-            }
-        } else if (char === ',' && !inQuotes) {
-            currentLine.push(currentField);
-            currentField = '';
-        } else if ((char === '\n' || char === '\r') && !inQuotes) {
-            if (currentField || currentLine.length > 0) {
-                currentLine.push(currentField);
-                lines.push(currentLine);
-                currentLine = [];
-                currentField = '';
-            }
-            if (char === '\r' && nextChar === '\n') {
-                i++;
-            }
-        } else {
-            currentField += char;
-        }
+// Calcular estadísticas
+function calcularEstadisticas(alumnos) {
+    const stats = {
+        aprobados: 0,
+        susp1: 0,
+        susp2: 0,
+        susp3: 0,
+        susp4mas: 0
+    };
+
+    for (const a of alumnos) {
+        const susp = a.suspensos;
+
+        if (susp === 0) stats.aprobados++;
+        else if (susp === 1) stats.susp1++;
+        else if (susp === 2) stats.susp2++;
+        else if (susp === 3) stats.susp3++;
+        else stats.susp4mas++;
     }
 
-    if (currentField || currentLine.length > 0) {
-        currentLine.push(currentField);
-        lines.push(currentLine);
+    return stats;
+}
+
+// Estadísticas por grupo
+function calcularEstadisticasPorGrupo(alumnos) {
+    const grupos = agruparPorGrupo(alumnos);
+    const resultado = {};
+
+    for (const g in grupos) {
+        resultado[g] = calcularEstadisticas(grupos[g]);
     }
 
-    return lines;
+    return resultado;
 }
 
-function showError(message) {
-    const errorDiv = document.getElementById('error');
-    if (errorDiv) {
-        errorDiv.textContent = message;
-        errorDiv.classList.add('active');
-    } else {
-        alert(message);
+// Estadísticas por nivel
+function calcularEstadisticasPorNivel(alumnos) {
+    const niveles = agruparPorNivel(alumnos);
+    const resultado = {};
+
+    for (const n in niveles) {
+        resultado[n] = calcularEstadisticas(niveles[n]);
     }
+
+    return resultado;
 }
 
-function setupDragAndDrop(uploadSectionId, fileInputId, processFileCallback) {
-    const uploadSection = document.getElementById(uploadSectionId);
-    const fileInput = document.getElementById(fileInputId);
-
-    if (!uploadSection || !fileInput) return;
-
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        uploadSection.addEventListener(eventName, preventDefaults, false);
-        document.body.addEventListener(eventName, preventDefaults, false);
-    });
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-        uploadSection.addEventListener(eventName, () => uploadSection.classList.add('dragover'), false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        uploadSection.addEventListener(eventName, () => uploadSection.classList.remove('dragover'), false);
-    });
-
-    uploadSection.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        handleFiles(files, processFileCallback);
-    }, false);
-
-    fileInput.addEventListener('change', (e) => {
-        handleFiles(e.target.files, processFileCallback);
-    }, false);
-}
-
-function handleFiles(files, processFileCallback) {
-    const file = files[0];
-    if (file) {
-        if (file.name.toLowerCase().endsWith('.csv')) {
-            const fileInfo = document.getElementById('fileInfo');
-            if (fileInfo) fileInfo.textContent = `📄 ${file.name}`;
-            processFileCallback(file);
-        } else {
-            alert('Por favor, sube un archivo CSV válido.');
-        }
-    }
-}
+   
